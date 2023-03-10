@@ -9,7 +9,7 @@ import Cart from "./Cart";
 
 const NavMenu = () => {
   const [isNavOpen, setIsNavOpen] = useState(false);
-  const [windowWidth, setWindowWidth] = useState(0);
+  const [windowWidth, setWindowWidth] = useState(768);
   const { data: session, status } = useSession();
   const userName = session?.user?.name;
 
@@ -84,7 +84,7 @@ const NavMenu = () => {
           </Link>
         )}
       </div>
-      {windowWidth > 768 && <Cart />}
+      {windowWidth >= 768 && <Cart />}
     </div>
   );
 };

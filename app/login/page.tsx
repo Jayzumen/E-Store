@@ -11,11 +11,10 @@ export default function LoginPage() {
 
   if (status === "authenticated") {
     router.push("/");
-    return null;
   }
 
-  const handleLogin = async (name: string) => {
-    await signIn(name);
+  const handleLogin = (name: string) => {
+    signIn(name);
   };
 
   return (
