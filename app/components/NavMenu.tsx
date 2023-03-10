@@ -4,13 +4,13 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { AiOutlineClose } from "react-icons/ai";
-import { useSession, signOut } from "next-auth/react";
+import { signOut } from "next-auth/react";
 import Cart from "./Cart";
+import { Session } from "next-auth";
 
-const NavMenu = () => {
+const NavMenu = ({ session }: { session: Session | null }) => {
   const [isNavOpen, setIsNavOpen] = useState(false);
   const [windowWidth, setWindowWidth] = useState(768);
-  const { data: session, status } = useSession();
   const userName = session?.user?.name;
 
   useEffect(() => {
@@ -64,7 +64,7 @@ const NavMenu = () => {
         >
           About
         </Link>
-        {status === "authenticated" ? (
+        {session ? (
           <div className="flex flex-col gap-4 md:flex-row">
             <span>{userName?.split(" ")[0]}</span>
             <button

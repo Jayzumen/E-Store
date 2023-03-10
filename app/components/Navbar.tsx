@@ -1,7 +1,10 @@
+import { authOptions } from "@/pages/api/auth/[...nextauth]";
+import { getServerSession } from "next-auth";
 import Link from "next/link";
 import NavMenu from "./NavMenu";
 
-const Navbar = () => {
+const Navbar = async () => {
+  const session = await getServerSession(authOptions);
   return (
     <nav className="sticky top-0 flex items-center justify-between h-20 px-10 text-xl bg-black">
       <Link
@@ -10,7 +13,7 @@ const Navbar = () => {
       >
         E-Store
       </Link>
-      <NavMenu />
+      <NavMenu session={session} />
     </nav>
   );
 };
