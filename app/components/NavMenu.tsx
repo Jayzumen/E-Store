@@ -35,7 +35,7 @@ const NavMenu = ({ session }: { session: Session | null }) => {
 
   return (
     <div className={`flex gap-4`}>
-      {windowWidth < 768 && <Cart />}
+      {windowWidth < 768 && <Cart session={session} />}
       <button
         onClick={() => setIsNavOpen(!isNavOpen)}
         className="text-3xl z-[11] md:hidden"
@@ -84,7 +84,7 @@ const NavMenu = ({ session }: { session: Session | null }) => {
           </Link>
         )}
       </div>
-      {windowWidth >= 768 && <Cart />}
+      {windowWidth >= 768 && <Cart session={session} />}
     </div>
   );
 };
