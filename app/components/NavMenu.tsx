@@ -4,11 +4,14 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { AiOutlineClose } from "react-icons/ai";
+import { useSession, signOut } from "next-auth/react";
 import Cart from "./Cart";
 
 const NavMenu = () => {
   const [isNavOpen, setIsNavOpen] = useState(false);
   const [windowWidth, setWindowWidth] = useState(0);
+  const { data: session, status } = useSession();
+  const userName = session?.user?.name;
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -49,6 +52,7 @@ const NavMenu = () => {
         <Link
           className="transition duration-200 hover:underline hover:text-slate-300"
           href="/products"
+          onClick={() => setIsNavOpen(false)}
         >
           Products
         </Link>
@@ -56,16 +60,29 @@ const NavMenu = () => {
         <Link
           className="transition duration-200 hover:underline hover:text-slate-300"
           href="/about"
+          onClick={() => setIsNavOpen(false)}
         >
           About
         </Link>
-
-        <Link
-          className="transition duration-200 hover:underline hover:text-slate-300"
-          href="/login"
-        >
-          Login
-        </Link>
+        {status === "authenticated" ? (
+          <div className="flex flex-col gap-4 md:flex-row">
+            <span>{userName?.split(" ")[0]}</span>
+            <button
+              className="transition duration-200 hover:underline hover:text-slate-300"
+              onClick={() => signOut()}
+            >
+              Logout
+            </button>
+          </div>
+        ) : (
+          <Link
+            className="transition duration-200 hover:underline hover:text-slate-300"
+            href="/login"
+            onClick={() => setIsNavOpen(false)}
+          >
+            Login
+          </Link>
+        )}
       </div>
       {windowWidth > 768 && <Cart />}
     </div>
