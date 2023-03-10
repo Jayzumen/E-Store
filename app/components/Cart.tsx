@@ -29,7 +29,7 @@ const Cart = () => {
             <div className="flex flex-col items-center h-full gap-4 px-8 pt-16 pb-10">
               {status === "authenticated" ? (
                 <p className="text-xl">
-                  {session?.user?.name?.split(" ")[0]}'s Cart
+                  {session?.user?.name?.split(" ")[0]}&apos;s Cart
                 </p>
               ) : (
                 <p>
