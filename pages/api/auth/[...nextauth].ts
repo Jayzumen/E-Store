@@ -1,6 +1,10 @@
 import NextAuth, { type NextAuthOptions } from "next-auth";
+import Credentials from "next-auth/providers/credentials";
 import GithubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
+import prismadb from "@/lib/prismadb";
+import { compare } from "bcrypt";
+import { PrismaAdapter } from "@next-auth/prisma-adapter";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -10,13 +14,62 @@ export const authOptions: NextAuthOptions = {
     }),
 
     GoogleProvider({
-      clientId: process.env.GOOGLE_ID!,
-      clientSecret: process.env.GOOGLE_SECRET!,
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+    }),
+    Credentials({
+      id: "credentials",
+      name: "Credentials",
+      credentials: {
+        email: {
+          label: "Email",
+          type: "text",
+        },
+        password: {
+          label: "Password",
+          type: "password",
+        },
+      },
+      async authorize(credentials) {
+        if (!credentials?.email || !credentials?.password) {
+          throw new Error("Email and password required");
+        }
+
+        const user = await prismadb.user.findUnique({
+          where: {
+            email: credentials.email,
+          },
+        });
+
+        if (!user || !user.hashedPassword) {
+          throw new Error("Email does not exist");
+        }
+
+        const isCorrectPassword = await compare(
+          credentials.password,
+          user.hashedPassword
+        );
+
+        if (!isCorrectPassword) {
+          throw new Error("Incorrect password");
+        }
+
+        return user;
+      },
     }),
   ],
-  secret: process.env.NEXTAUTH_SECRET!,
+  pages: {
+    signIn: "/login",
+  },
+  debug: process.env.NODE_ENV === "development",
+  adapter: PrismaAdapter(prismadb),
   session: {
     strategy: "jwt",
+  },
+  secret: process.env.NEXTAUTH_SECRET!,
+
+  jwt: {
+    secret: process.env.NEXTAUTH_JWT_SECRET!,
   },
 };
 
